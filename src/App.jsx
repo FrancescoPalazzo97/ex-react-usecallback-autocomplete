@@ -1,9 +1,13 @@
 import { useState, useEffect, useCallback } from "react"
-const API = `http://localhost:3333/products?search=`
+import ProductDetails from "./components/ProductDetails";
+const API_SEARCH = `http://localhost:3333/products?search=`
+const API_DETAILS = `http://localhost:3333/products/`
 
 function App() {
   const [search, setSearch] = useState('');
   const [filteredProducts, setFilteredProducts] = useState([]);
+  const [productDetails, setProductDetails] = useState(null);
+  const [show, setShow] = useState(false);
 
   const debounce = (callback, delay) => {
     let timerId;
@@ -28,11 +32,20 @@ function App() {
       .catch(e => console.error(`Errore nel recupero dei dati dal server: \n\n${e}`))
   }, 500), [])
 
+  const getProductDetails = (id) => {
+    fetch(`${API_DETAILS}${id}`)
+      .then(res => res.json())
+      .then(data => setProductDetails(data));
+    setShow(false);
+  }
+
   useEffect(() => {
     if (search.length >= 2) {
-      getProducts(`${API}${search}`)
+      getProducts(`${API_SEARCH}${search}`)
+      setShow(true);
     } else {
       setFilteredProducts([]);
+      setShow(false);
     }
   }, [search])
 
@@ -40,7 +53,7 @@ function App() {
     <>
       <div className="container">
         <div className="row py-5">
-          <div className="col-12">
+          <div className="col-12 position-relative">
             <h1 className="text-center text-uppercase pb-5">Cerca il tuo prodotto</h1>
             <input
               type="text"
@@ -49,12 +62,25 @@ function App() {
               value={search}
               onChange={e => setSearch(e.target.value)}
             />
-            {search.length >= 2 && filteredProducts.length > 0 &&
-              <ul className="list-group results-list">
+            {show &&
+              <ul className="list-group results-list position-absolute z-1">
                 {filteredProducts.map(p => (
-                  <li key={p.id} className="list-group-item">{p.name}</li>
+                  <li
+                    key={p.id}
+                    className="list-group-item"
+                    onClick={() => getProductDetails(p.id)}
+                  >
+                    {p.name}
+                  </li>
                 ))}
               </ul>
+            }
+          </div>
+        </div>
+        <div className="row">
+          <div className="col-12">
+            {productDetails &&
+              <ProductDetails p={productDetails} />
             }
           </div>
         </div>

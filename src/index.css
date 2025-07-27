@@ -1,0 +1,16 @@
+ul {
+    top: 100%;
+    right: 1rem;
+    left: 1rem;
+    border: none;
+}
+
+li.list-group-item {
+    cursor: pointer;
+    border: none;
+}
+
+li.list-group-item:hover {
+    background-color: #0d6efd;
+    color: white;
+}
