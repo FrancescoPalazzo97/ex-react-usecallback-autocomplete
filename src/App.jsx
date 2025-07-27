@@ -35,13 +35,14 @@ function App() {
   const getProductDetails = (id) => {
     fetch(`${API_DETAILS}${id}`)
       .then(res => res.json())
-      .then(data => setProductDetails(data));
+      .then(data => setProductDetails(data))
+      .catch(e => console.error(`Errore nel recupero dei dati dal server: \n\n${e}`));
     setShow(false);
   }
 
   useEffect(() => {
     if (search.length >= 2) {
-      getProducts(`${API_SEARCH}${search}`)
+      getProducts(`${API_SEARCH}${search}`);
       setShow(true);
     } else {
       setFilteredProducts([]);
