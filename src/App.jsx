@@ -41,13 +41,13 @@ function App() {
   }
 
   useEffect(() => {
-    if (search.length >= 2) {
-      getProducts(`${API_SEARCH}${search}`);
-      setShow(true);
-    } else {
+    if (!search.trim()) {
       setFilteredProducts([]);
       setShow(false);
+      return
     }
+    getProducts(`${API_SEARCH}${search}`);
+    setShow(true);
   }, [search])
 
   return (
